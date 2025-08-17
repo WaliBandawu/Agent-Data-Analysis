@@ -21,7 +21,7 @@ Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/WaliBandawu/Agent-Data-Analysis.git
-cd data-ml-agent
+
 pip install -r requirements.txt
 Required packages include:
 
