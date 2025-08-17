@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+langchain
+langchain-openai
+scikit-learn
+pandas
+langgraph
+streamlit
+python-dotenv
