@@ -7,3 +7,5 @@ pandas
 langgraph
 streamlit
 python-dotenv
+autogluon
+zoofs
