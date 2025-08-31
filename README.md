@@ -1,105 +1,102 @@
-# Data Analysis & ML Agent 🚀
+# Data Science Assistant with LangChain
 
-This project is a **data analysis and machine learning agent** that automates feature selection and model training.  
-It leverages **Zoofs** (a feature selection library based on nature-inspired optimization) and **AutoML frameworks** (e.g., LightGBM, AutoGluon) to build efficient predictive models.
-
----
-
-## ✨ Features
-
-- Automated **feature selection** using Zoofs Genetic Algorithm.
-- Flexible **objective function** (log loss in current implementation).
-- Supports **scikit-learn compatible models** (e.g., LightGBM, XGBoost, RandomForest).
-- Integration-ready with **AutoML frameworks** (e.g., AutoGluon).
-- Built for **data analysis + ML experimentation** workflows.
+This project is an AI-powered **Data Science Assistant** that leverages OpenAI’s GPT models and LangChain to interact with datasets, perform analysis, preprocessing, feature selection, and machine learning tasks. It provides a conversational interface for users to manage and explore their CSV datasets efficiently.
 
 ---
 
-## 🛠️ Installation
+## Features
 
-Clone the repository and install dependencies:
+* **Dataset Management**
+
+  * List all available datasets in a folder
+  * Load and preview datasets
+* **Data Analysis**
+
+  * Generate comprehensive summary statistics
+  * Clean datasets (handle missing values, encode categorical features)
+  * Feature selection for model building
+* **Machine Learning**
+
+  * Train machine learning models (classification or regression)
+  * Automatic task type detection based on the target variable
+
+---
+
+## Requirements
+
+* Python 3.10+
+* Libraries:
+
+  * `langchain`
+  * `langchain-openai`
+  * `dotenv`
+  * `pandas`
+  * `numpy`
+  * `scikit-learn`
+
+Install dependencies via:
 
 ```bash
-git clone https://github.com/WaliBandawu/Agent-Data-Analysis.git
-
 pip install -r requirements.txt
-Required packages include:
+```
 
-zoofs
+---
 
-lightgbm
+## Setup
 
-scikit-learn
+1. Clone the repository:
 
-autogluon (optional for extended AutoML support)
+```bash
+git clone https://github.com/WaliBandawu/Agent-Data-Analysis/
+cd <repo_folder>
+```
 
-⚡ Usage
-1. Define an Objective Function
-The agent requires an objective function that trains a model and returns a score.
-By default, log_loss is used:
+2. Create a `.env` file and add your OpenAI API key:
 
-python
-Copy
-Edit
-from sklearn.metrics import log_loss
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+```
 
-def objective_function_topass(model, X_train, y_train, X_valid, y_valid):
-    model.fit(X_train, y_train)  
-    predictions = model.predict_proba(X_valid)
-    return log_loss(y_valid, predictions)
-2. Run Zoofs for Feature Selection
-python
-Copy
-Edit
-from zoofs import GeneticOptimization
-import lightgbm as lgb
+Alternatively, the script will prompt you to enter the key interactively if it is not set.
 
-# Define model
-lgb_model = lgb.LGBMClassifier()
+---
 
-# Initialize Zoofs optimizer
-algo_object = GeneticOptimization(
-    objective_function_topass,
-    n_iteration=20,
-    population_size=20,
-    selective_pressure=2,
-    elitism=2,
-    mutation_rate=0.05,
-    minimize=True
-)
+### Example Queries
 
-# Fit optimizer
-algo_object.fit(lgb_model, X_train, y_train, X_valid, y_valid, verbose=True)
+* `List all datasets`
+* `Load dataset "sales_data.csv"`
+* `Generate summary for dataset "customer_data.csv"`
+* `Clean dataset "marketing.csv" with target "purchase"`
+* `Select top 10 features from "sales.csv" with target "revenue"`
+* `Train model on "sales.csv" with target "revenue"`
 
-# Plot optimization history
-algo_object.plot_history()
+---
 
-# Extract best feature subset
-best_features = algo_object.best_feature_list
-print("Best Features:", best_features)
-📊 Workflow
-Load your dataset.
+## How It Works
 
-Define training/validation splits.
+1. **Tool Wrappers:** Each dataset or ML-related function is wrapped as a `Tool` using `Tool.from_function`.
+2. **Prompt Template:** Defines the AI assistant behavior and instructions for tool usage.
+3. **LLM Integration:** Uses GPT-4o-mini to understand user queries and select the appropriate tool.
+4. **Agent Execution:** `AgentExecutor` manages the flow, runs tools, and returns both results and intermediate reasoning steps.
 
-Choose an ML model (LightGBM by default).
+---
 
-Optimize feature subset with Zoofs.
+## Project Structure
 
-Evaluate results and use the best features for downstream tasks.
+```
+.
+├── tools/
+│   ├── dataset_tools.py       # Functions to list/load datasets
+│   ├── analysis_tools.py      # Functions to summarize datasets
+│   └── ml_tools.py            # Functions to clean, select features, and train models
+├── data_agent.py              # Main agent initialization and executor
+├── requirements.txt           # Python dependencies
+└── .env                       # Environment variables (OpenAI API key)
+```
 
-🔮 Roadmap
- Add support for more AutoML backends (e.g., AutoGluon).
+---
 
- Build agent-like CLI for end-to-end automation.
+## Notes
 
- Extend feature selection to regression tasks.
-
- Add visualization dashboard.
-
-🤝 Contributing
-Contributions are welcome! Please fork the repo and submit a pull request.
-
-📜 License
-This project is licensed under the MIT License.
-
+* The agent automatically determines if a target variable corresponds to a classification or regression task.
+* Always provide JSON strings when passing multiple parameters to tools like `train_model`, `clean_data`, and `feature_selection`.
